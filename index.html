@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Search Twitter</title>
+</head>
+
+<body>
+	<h1>My Tweets</h1>
+	<ul class="tweets"></ul>
+
+<script src="js/jquery-1.11.1.min.js"></script>	
+<script src="js/searchTwitter.js"></script>
+<script>
+	$('ul.tweets').queryTwitter('@jeffre_way');
+
+</script>
+</body>
+</html>
