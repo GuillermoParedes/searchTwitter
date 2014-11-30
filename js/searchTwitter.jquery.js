@@ -17,14 +17,48 @@ if( typeof Object.create !== 'function'){
 
  			self.url = 'http://search.twitter.com/search.json';
 
- 			if( typeof options === 'string') {
- 				self.search = options
- 			}else {
- 				self.search = options.search;
- 				self.options = $.extend({}, $.fn.queryTwitter.options,options);
- 				console.log(self.options);
- 			}
- 		} 
+ 			self.search = (typeof options === 'string')
+ 			? options
+ 			: options.search;
+ 			self.options = $.extend({}, $.fn.queryTwitter.options,options);
+ 				options);
+ 			self.cycle();
+ 		},
+ 		cycle:function(){
+ 			var self = this;
+ 			self.fetch().done(function(results){
+ 				results = self.limit( results.results, self.options.limit);
+ 				
+ 				self.buildFrag(results);
+ 				
+ 				self.display();
+
+ 				if( typeof self.options.onComplete === 'function') {
+ 					self.options.onComplete.apply(self.elem, arguments);
+ 				}
+ 			});
+ 		}
+ 		fetch: function(){
+ 			return $.ajax({
+ 				url: this.url,
+ 				data: {q: this.search},
+ 				dataType: 'jsonp'
+ 			});
+ 		},
+ 		buildFrag: function(){
+ 			var self= this;
+ 			self.tweets = $.map(results, function(obj,i){
+				return $(self.options.wrapEachWith).append(obj.text)[0];
+
+ 			});
+ 			console.log('self.tweets');
+ 		},
+ 		display: function(){
+ 			this.$elem.html(this.tweets);
+ 		},
+ 		limit: function(obj, count) {
+
+ 		}
  	}
 
  	$.fn.queryTwitter = function(options){
@@ -36,7 +70,11 @@ if( typeof Object.create !== 'function'){
  	};
 
  	$.fn.queryTwitter.options = {
- 		search : '@tutspremium'
+ 		search : '@tutspremium',
+		wrapEachWith: '<<li></li>',
+		limit: 10,
+		refresh: null,
+		onComplete: null  		
  	}
  })($ ,window,document);
 
